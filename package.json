@@ -1,0 +1,13 @@
+{
+  "name": "sleep-calculator",
+  "version": "1.0.1",
+  "description": "A secure and modern sleep calculator web app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "helmet": "^7.0.0"
+  }
+}
