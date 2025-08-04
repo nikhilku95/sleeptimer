@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sleep Calculator</title>
+  <style>
+    :root { --primary: #4a90e2; --bg: #ffffff; --text: #1a1a1a; --card: #f9f9f9; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f4f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--primary);
+      background: #4a90e2;
+      color: white;
+      width: 100%;
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+    }
+    input[type="time"] {
+      padding: 0.5rem;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button {
+      border-radius: 0.375rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3a78c2;
+    }
+    #output {
+      margin-top: 2rem;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin: 0.25rem 0;
+    }
+    footer {
+      background: #e0e0e0;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>Sleep Calculator</header>
+  <main>
+    <label for="wakeTime">I want to wake up at:</label>
+    <input type="time" id="wakeTime">
+    <button onclick="showBedTimes()">Calculate Bedtimes</button>
+
+    <label for="nowSleep">Or I want to sleep now:</label>
+    <button onclick="showWakeTimes()">Calculate Wake-Up Times</button>
+
+    <div id="output"></div>
+  </main>
+  <footer>
+    Healthy sleep cycles are usually ~90 minutes. Aim for 5–6 full cycles per night.
+  </footer>
+  <script>
+    function calculateSleepTimes(baseTime, mode) {
+      const cycleMinutes = 90;
+      const buffer = 14;
+      const results = [];
+
+      for (let i = 6; i >= 1; i--) {
+        let total = i * cycleMinutes + buffer;
+        let target = new Date(baseTime.getTime());
+        if (mode === "wake") {
+          target.setMinutes(target.getMinutes() - total);
+        } else {
+          target.setMinutes(target.getMinutes() + total);
+        }
+        results.push(target.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      }
+
+      return results;
+    }
+
+    function showBedTimes() {
+      const input = document.getElementById("wakeTime").value;
+      if (!input) return alert("Please enter a wake-up time!");
+      const [hour, minute] = input.split(":");
+      const wakeTime = new Date();
+      wakeTime.setHours(parseInt(hour), parseInt(minute), 0);
+
+      const results = calculateSleepTimes(wakeTime, "wake");
+      document.getElementById("output").innerHTML =
+        "<h2>Recommended Bedtimes:</h2><ul>" +
+        results.reverse().map(t => `<li>${t}</li>`).join("") + "</ul>";
+    }
+
+    function showWakeTimes() {
+      const now = new Date();
+      const results = calculateSleepTimes(now, "sleep");
+      document.getElementById("output").innerHTML =
+        "<h2>If you sleep now, wake up at:</h2><ul>" +
+        results.reverse().map(t => `<li>${t}</li>`).join("") + "</ul>";
+    }
+  </script>
+</body>
+</html>
